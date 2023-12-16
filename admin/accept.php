@@ -1,0 +1,60 @@
+<hr>
+<center>
+    <h2>
+        <b>อนุมัติผู้ใช้งาน</b>
+    </h2>
+</center>
+<hr>
+<table class="table table-bordder table-hover">
+    <thead align='center'>
+        <th scope='col'>ลำดับ</th>
+        <th scope='col'>รูปภาพ</th>
+        <th scope='col'>ชื่อจริง</th>
+        <th scope='col'>นามสกุล</th>
+        <th scope='col'>วันเกิด</th>
+        <th scope='col'>เพศ</th>
+        <th scope='col'>อีเมล</th>
+        <th scope='col'>สถานะ</th>
+        <th scope='col'>ปรับเปลี่ยน</th>
+    </thead>
+    <?php
+    $i = 1;
+    if (isset($_GET['status']) and isset($_GET['id'])) {
+        $status = $_GET['status'];
+        $id = $_GET['id'];
+        query_sql($con, "update user_db set user_status='$status' where user_id='$id'");
+    }
+    $i = 1;
+    $result = query_sql($con, "select * from user_db where user_status !='9'");
+    while ($row = mysqli_fetch_array($result)) { ?>
+        <tr align='center'>
+            <td><?php echo $i; ?></td>
+            <td> <?php
+                    if (empty($row['user_img'])) {
+                        $img = "login4.png";
+                    } else {
+                        $img = $row['user_img'];
+                    } ?>
+                <div style="height:80px;width:80px;border-radius:100%;background-image:url('../image/<?php echo $img; ?>');
+        background-size:cover;background-position:center">
+            </td>
+            <td><?php echo $row['user_fname']; ?></td>
+            <td><?php echo $row['user_lname']; ?></td>
+            <td><?php $d = date_create($row['user_bd']);
+                echo date_format($d, 'D d M Y'); ?></td>
+            <td><?php echo sex($row['user_sex']); ?></td>
+            <td><?php echo $row['user_email']; ?></td>
+            <td><?php echo status($row['user_status']); ?></td>
+            <td>
+                <?php
+                if ($row['user_status'] == "1") { ?>
+                    <a href="?page=accept&status=0&id=<?php echo $row['user_id']; ?>" class="btn btn-danger">ยกเลิก</a>
+                <?php } else { ?>
+                    <a href="?page=accept&status=1&id=<?php echo $row['user_id']; ?>" class="btn btn-success">อนุมัติ</a>
+                <?php  } ?>
+            </td>
+        </tr>
+    <?php $i++;
+    }
+    ?>
+</table>
